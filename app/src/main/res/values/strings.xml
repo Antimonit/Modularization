@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Modularization</string>
+    <string name="title_borrower">Borrower</string>
+    <string name="title_investor">Investor</string>
+</resources>

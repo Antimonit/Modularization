@@ -1,0 +1,8 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="me.khol.onboarding">
+
+    <application>
+        <activity android:name=".OnboardingActivity"/>
+    </application>
+
+</manifest>

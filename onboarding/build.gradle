@@ -1,0 +1,21 @@
+apply from: "$rootDir/common-android-library.gradle"
+apply plugin: 'kotlin-kapt'
+
+dependencies {
+    implementation Libraries.lifecycleExtensions
+    kapt Libraries.lifecycleCompiler
+
+    implementation SupportLibraries.design
+    implementation SupportLibraries.cardview
+    implementation SupportLibraries.appcompat
+    implementation SupportLibraries.recyclerview
+
+    testImplementation TestLibraries.junit
+    testImplementation TestLibraries.assertjCore
+    testImplementation TestLibraries.mockitoKotlin
+    testImplementation TestLibraries.mockitoInline
+    testImplementation TestLibraries.lifecycleTesting
+
+    androidTestImplementation TestLibraries.runner
+    androidTestImplementation TestLibraries.espresso
+}
