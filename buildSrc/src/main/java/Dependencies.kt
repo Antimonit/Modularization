@@ -1,5 +1,5 @@
 object ApplicationId {
-    const val id = "me.khol.namingishard"
+    const val id = "me.khol.modularization"
 }
 
 object Modules {
@@ -21,7 +21,7 @@ object Modules {
 }
 
 object Releases {
-    const val versionCode = 1
+    const val versionCode = 4
     const val versionName = "1.0"
 }
 
