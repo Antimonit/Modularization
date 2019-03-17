@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 28
@@ -20,15 +21,14 @@ android {
         }
     }
 
-    dynamicFeatures = [":borrower", ":investor"]
+    dynamicFeatures = [Modules.borrower, Modules.investor]
 }
 
 dependencies {
-    implementation project(Modules.navigation)
+    implementation project(Modules.base)
+    implementation project(Modules.intro)
     implementation project(Modules.onboarding)
-//    implementation project(Modules.cache)
-//    implementation project(Modules.network)
-//    implementation project(Modules.presentation)
+    implementation project(Modules.navigation)
 
     implementation Libraries.kotlin
 
@@ -38,12 +38,14 @@ dependencies {
     implementation SupportLibraries.recyclerview
     implementation SupportLibraries.constraintlayout
 
+    implementation Libraries.lifecycleRuntime
+    implementation Libraries.lifecycleExtensions
+    kapt Libraries.lifecycleCompiler
+
     implementation Libraries.ktx
 
     implementation Libraries.koinAndroid
     implementation Libraries.koinViewModel
-
-    implementation Libraries.lifecycleExtensions
 
     testImplementation TestLibraries.junit
     androidTestImplementation TestLibraries.runner

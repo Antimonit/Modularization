@@ -1,0 +1,11 @@
+apply from: "$rootDir/common-android-dynamic-feature.gradle"
+
+dependencies {
+    implementation project(Modules.base)
+    implementation project(Modules.navigation)
+
+    implementation SupportLibraries.design
+    implementation SupportLibraries.cardview
+    implementation SupportLibraries.appcompat
+    implementation SupportLibraries.recyclerview
+}

@@ -1,1 +1,8 @@
-include Modules.app, Modules.navigation, Modules.onboarding, Modules.borrower, Modules.investor
+include Modules.app,
+        Modules.base,
+        Modules.intro,
+        Modules.onboarding,
+        Modules.borrower,
+        Modules.investor,
+        Modules.navigation,
+        Modules.network
