@@ -58,6 +58,7 @@ class SplitInstall(context: Context) {
         return observeSessionState(sessionId)
             .takeWhile {
                 Log.d("SplitInstall", "Blocked")
+                // TODO: this does not work well....
                 val blocked = hasSession(it.sessionId()).blockingGet()
                 Log.d("SplitInstall", "Blocked result: $blocked")
                 blocked
