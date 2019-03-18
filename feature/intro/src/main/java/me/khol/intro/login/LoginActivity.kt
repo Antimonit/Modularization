@@ -10,7 +10,7 @@ import io.reactivex.rxkotlin.plusAssign
 import me.khol.base.base.BaseActivity
 import me.khol.intro.R
 import me.khol.navigation.navigation
-import me.khol.network.apiInteractor
+import org.koin.androidx.viewmodel.ext.viewModel
 
 class LoginActivity : BaseActivity() {
 
@@ -21,13 +21,11 @@ class LoginActivity : BaseActivity() {
     private val txtPassword by lazy { findViewById<EditText>(R.id.password) }
     private val txtState by lazy { findViewById<TextView>(R.id.txt_state) }
 
-    private lateinit var viewModel: LoginViewModel
+    private val viewModel: LoginViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-
-        viewModel = LoginViewModel(this, apiInteractor)
 
         disposables += viewModel.observeLoading()
             .observeOn(AndroidSchedulers.mainThread())
