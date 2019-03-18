@@ -9,8 +9,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import me.khol.base.base.BaseActivity
 import me.khol.intro.R
-import me.khol.navigation.features.BorrowerNavigation
-import me.khol.navigation.features.InvestorNavigation
+import me.khol.navigation.navigation
 import me.khol.network.apiInteractor
 
 class LoginActivity : BaseActivity() {
@@ -52,8 +51,8 @@ class LoginActivity : BaseActivity() {
                         when (result) {
                             is Result.Success.Installed -> {
                                 when (result.module) {
-                                    Module.Borrower -> BorrowerNavigation.dynamicStart
-                                    Module.Investor -> InvestorNavigation.dynamicStart
+                                    Module.Borrower -> navigation.borrowerIntent()
+                                    Module.Investor -> navigation.investorIntent()
                                 }?.let { startActivity(it) }
                             }
                             is Result.Success.RequiresUserConfirmation -> {
