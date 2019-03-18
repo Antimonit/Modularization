@@ -3,17 +3,18 @@ package me.khol.intro.login
 import android.content.Context
 import com.google.android.play.core.splitinstall.SplitInstallException
 import com.google.android.play.core.splitinstall.SplitInstallManager
+import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
 import com.google.android.play.core.splitinstall.SplitInstallSessionState
 import com.google.android.play.core.splitinstall.model.SplitInstallErrorCode
 import com.google.android.play.core.splitinstall.model.SplitInstallSessionStatus
+import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.plusAssign
+import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import me.khol.base.base.BaseViewModel
-import me.khol.navigation.SplitInstall
+import me.khol.navigation.*
 import me.khol.network.ApiInteractor
-import me.khol.network.User
-import kotlin.random.Random
 
 /**
  *
@@ -23,47 +24,68 @@ class LoginViewModel(
     private val apiInteractor: ApiInteractor
 ) : BaseViewModel() {
 
-    private val splitInstall = SplitInstall(context)
+    private val manager: SplitInstallManager by lazy { SplitInstallManagerFactory.create(context) }
 
     private val loadingSubject = BehaviorSubject.create<Boolean>()
+    private val modulesSubject = BehaviorSubject.create<List<String>>()
     private val progressSubject = BehaviorSubject.create<Result>()
 
     fun observeLoading(): Observable<Boolean> = loadingSubject
+    fun observeModules(): Observable<List<String>> = modulesSubject
     fun observeProgress(): Observable<Result> = progressSubject
+
+    private var currentSessionModule: SessionModule? = null
+
+    init {
+        disposables += manager.observeSessionStates()
+            .subscribeOn(Schedulers.io())
+            .subscribe { state ->
+                currentSessionModule?.let { (session, module) ->
+                    if (state.sessionId() == session) {
+                        progressSubject.onNext(resolveSessionState(module, state))
+                    }
+                }
+                refreshAvailableModules()
+            }
+
+        refreshAvailableModules()
+    }
+
+    private fun refreshAvailableModules() {
+        modulesSubject.onNext(manager.installedModules.toList())
+    }
 
     fun login(email: String, password: String) {
         disposables += apiInteractor.login(email, password)
             .doOnSubscribe { loadingSubject.onNext(true) }
-            .map<LoginResult>(LoginResult::Success)
-            .onErrorReturn(LoginResult::Error)
-            .flatMapObservable(::handleLoginResult)
             .doFinally { loadingSubject.onNext(false) }
-            .subscribe(progressSubject::onNext)
+            .subscribe({ user ->
+                loadModule(if (email.hashCode() % 2 == 0) Module.Borrower else Module.Investor)
+            }, {
+                progressSubject.onNext(Result.Error.LoginError(it.toString()))
+            })
     }
 
-    private fun handleLoginResult(it: LoginResult): Observable<Result> {
-        return when (it) {
-            is LoginResult.Success -> if (Random.nextBoolean()) {
-                loadModule(Module.Borrower)
-            } else {
-                loadModule(Module.Investor)
-            }
-            is LoginResult.Error -> {
-                Observable.just(Result.Error.LoginError(it.throwable.toString()))
-            }
-        }
-    }
+    private fun loadModule(module: Module) {
+//        if (manager.hasModule(module.name)) {
+//            progressSubject.onNext(Result.Success.Installed(module, "Installed"))
+//
+//        } else {
+            val cancel = currentSessionModule?.let {
+                manager.cancelDownload(it.session)
+                    .doOnError { progressSubject.onNext(resolveSessionError(module, it)) }
+                    .onErrorComplete()
+            } ?: Completable.complete()
 
-    private fun loadModule(module: Module): Observable<Result> {
-//        if (splitInstall.hasModule(module.name)) {
-//            return Observable.just(Result.Success.Installed(module, "Installed"))
+            val download = manager.downloadModule(module.name)
+
+            disposables += cancel.andThen(download)
+                .subscribe({ sessionId ->
+                    currentSessionModule = SessionModule(sessionId, module)
+                }, { throwable ->
+                    progressSubject.onNext(resolveSessionError(module, throwable))
+                })
 //        }
-
-        return splitInstall.downloadModule(module.name)
-            .toObservable()
-            .flatMap(splitInstall::observeSessionStateWhileActive)
-            .map<Result> { state -> resolveSessionState(module, state) }
-            .onErrorReturn { throwable -> resolveSessionError(module, throwable) }
     }
 
     private fun resolveSessionState(module: Module, state: SplitInstallSessionState): Result.Success {
@@ -71,7 +93,12 @@ class LoginViewModel(
             SplitInstallSessionStatus.UNKNOWN -> "Unknown"
             SplitInstallSessionStatus.PENDING -> "Pending"
             SplitInstallSessionStatus.REQUIRES_USER_CONFIRMATION -> {
-                return Result.Success.RequiresUserConfirmation(module, splitInstall.manager, state, "Requires user confirmation")
+                return Result.Success.RequiresUserConfirmation(
+                    module,
+                    manager,
+                    state,
+                    "Requires user confirmation"
+                )
             }
             SplitInstallSessionStatus.DOWNLOADING -> {
                 val done = state.bytesDownloaded()
@@ -119,23 +146,27 @@ class LoginViewModel(
     }
 }
 
+private data class SessionModule(val session: Int, val module: Module)
+
 sealed class Module(val name: String) {
     object Borrower : Module("borrower")
     object Investor : Module("investor")
 }
 
-sealed class LoginResult {
-    class Success(val user: User) : LoginResult()
-    class Error(val throwable: Throwable) : LoginResult()
-}
-
 sealed class Result {
     sealed class Success(val module: Module, val text: String) : Result() {
         class Simple(module: Module, text: String) : Success(module, text)
-        class RequiresUserConfirmation(module: Module, val manager: SplitInstallManager, val state: SplitInstallSessionState, text: String) : Success(module, text)
+        class RequiresUserConfirmation(
+            module: Module,
+            val manager: SplitInstallManager,
+            val state: SplitInstallSessionState,
+            text: String
+        ) : Success(module, text)
+
         class Installed(module: Module, text: String) : Success(module, text)
         class Downloading(module: Module, text: String) : Success(module, text)
     }
+
     sealed class Error(val text: String) : Result() {
         class LoginError(text: String) : Error(text)
         class ModuleError(val module: Module, text: String) : Error(text)

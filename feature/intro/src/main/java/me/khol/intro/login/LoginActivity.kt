@@ -29,8 +29,6 @@ class LoginActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-//        refreshAvailableModules()
-
         viewModel = LoginViewModel(this, apiInteractor)
 
         disposables += viewModel.observeLoading()
@@ -40,12 +38,18 @@ class LoginActivity : BaseActivity() {
                 progress.visibility = if (loading) View.VISIBLE else View.GONE
             }
 
+        disposables += viewModel.observeModules()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { modules ->
+                txtModules.text = "Modules: ${modules.joinToString()}"
+            }
+
         disposables += viewModel.observeProgress()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { result ->
                 when (result) {
                     is Result.Success -> {
-                        txtState.text = result.text
+                        txtState.text = txtState.text.toString() + "\n" + result.text
                         when (result) {
                             is Result.Success.Installed -> {
                                 when (result.module) {
@@ -90,10 +94,6 @@ class LoginActivity : BaseActivity() {
 //            .subscribe({ state ->
 //                resolveSessionState(state, continuation)
 //            }, ::resolveError)
-//    }
-//
-//    private fun refreshAvailableModules() {
-//        txtModules.text = splitInstall.manager.installedModules.joinToString()
 //    }
 //
 //    private fun resolveSessionState(state: SplitInstallSessionState, continuation: () -> Unit) {
