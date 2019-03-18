@@ -5,7 +5,6 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
-import com.google.android.material.snackbar.Snackbar
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import me.khol.base.base.BaseActivity
@@ -63,11 +62,7 @@ class LoginActivity : BaseActivity() {
                         }
                     }
                     is Result.Error -> {
-                        Snackbar.make(
-                            findViewById(android.R.id.content)!!,
-                            "Error: ${result.text}",
-                            Snackbar.LENGTH_LONG
-                        ).show()
+                        txtState.text = txtState.text.toString() + "\n" + result.text
                     }
                 }
             }
@@ -79,78 +74,4 @@ class LoginActivity : BaseActivity() {
             )
         }
     }
-//
-//    private fun open(module: String, continuation: () -> Unit) {
-////        if (splitInstall.manager.installedModules.contains(module)) {
-////            continuation()
-////            return
-////        }
-//
-//        disposables += splitInstall.downloadModule(module)
-//            .toObservable()
-//            .switchMap { sessionId ->
-//                splitInstall.observeSessionState(sessionId)
-//            }
-//            .subscribe({ state ->
-//                resolveSessionState(state, continuation)
-//            }, ::resolveError)
-//    }
-//
-//    private fun resolveSessionState(state: SplitInstallSessionState, continuation: () -> Unit) {
-//        val text = when (state.status()) {
-//            SplitInstallSessionStatus.UNKNOWN -> "Unknown"
-//            SplitInstallSessionStatus.PENDING -> "Pending"
-//            SplitInstallSessionStatus.REQUIRES_USER_CONFIRMATION -> {
-//                splitInstall.manager.startConfirmationDialogForResult(state, this, 1337)
-//                "Requires user confirmation"
-//            }
-//            SplitInstallSessionStatus.DOWNLOADING -> {
-//                val done = state.bytesDownloaded()
-//                val total = state.totalBytesToDownload()
-//                val progress = done * 100 / total
-//                "Downloading $progress% | $done/$total"
-//            }
-//            SplitInstallSessionStatus.DOWNLOADED -> "Downloaded"
-//            SplitInstallSessionStatus.INSTALLING -> "Installing"
-//            SplitInstallSessionStatus.INSTALLED -> {
-//                continuation()
-//                "Installed"
-//            }
-//            SplitInstallSessionStatus.FAILED -> "Failed"
-//            SplitInstallSessionStatus.CANCELING -> "Canceling"
-//            SplitInstallSessionStatus.CANCELED -> "Canceled"
-//            else -> "Unknown"
-//        }
-//        Log.i("LoginActivity", "Success: $text")
-//        txtState.text = text
-//        refreshAvailableModules()
-//    }
-//
-//    private fun resolveError(throwable: Throwable) {
-//        val text = if (throwable is SplitInstallException) {
-//            when (throwable.errorCode) {
-//                SplitInstallErrorCode.NO_ERROR -> "NO_ERROR"
-//                SplitInstallErrorCode.ACTIVE_SESSIONS_LIMIT_EXCEEDED -> "ACTIVE_SESSIONS_LIMIT_EXCEEDED"
-//                SplitInstallErrorCode.MODULE_UNAVAILABLE -> "MODULE_UNAVAILABLE"
-//                SplitInstallErrorCode.INVALID_REQUEST -> "INVALID_REQUEST"
-//                SplitInstallErrorCode.SESSION_NOT_FOUND -> "SESSION_NOT_FOUND"
-//                SplitInstallErrorCode.API_NOT_AVAILABLE -> "API_NOT_AVAILABLE"
-//                SplitInstallErrorCode.NETWORK_ERROR -> "NETWORK_ERROR"
-//                SplitInstallErrorCode.ACCESS_DENIED -> "ACCESS_DENIED"
-//                SplitInstallErrorCode.INCOMPATIBLE_WITH_EXISTING_SESSION -> "INCOMPATIBLE_WITH_EXISTING_SESSION"
-//                SplitInstallErrorCode.SERVICE_DIED -> "SERVICE_DIED"
-//                SplitInstallErrorCode.INSUFFICIENT_STORAGE -> "INSUFFICIENT_STORAGE"
-//                SplitInstallErrorCode.SPLITCOMPAT_VERIFICATION_ERROR -> "SPLITCOMPAT_VERIFICATION_ERROR"
-//                SplitInstallErrorCode.SPLITCOMPAT_EMULATION_ERROR -> "SPLITCOMPAT_EMULATION_ERROR"
-//                SplitInstallErrorCode.SPLITCOMPAT_COPY_ERROR -> "SPLITCOMPAT_COPY_ERROR"
-//                SplitInstallErrorCode.INTERNAL_ERROR -> "INTERNAL_ERROR"
-//                else -> "Unknown SplitInstall error"
-//            }
-//        } else {
-//            "Unknown error"
-//        }
-//        Log.i("LoginActivity", "Error: $text")
-//        txtState.text = text
-//        refreshAvailableModules()
-//    }
 }

@@ -3,7 +3,7 @@ object ApplicationId {
 }
 
 object Releases {
-    const val versionCode = 4
+    const val versionCode = 8
     const val versionName = "1.0"
 }
 

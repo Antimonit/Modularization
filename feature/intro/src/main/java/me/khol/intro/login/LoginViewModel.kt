@@ -1,6 +1,7 @@
 package me.khol.intro.login
 
 import android.content.Context
+import android.util.Log
 import com.google.android.play.core.splitinstall.SplitInstallException
 import com.google.android.play.core.splitinstall.SplitInstallManager
 import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
@@ -9,12 +10,14 @@ import com.google.android.play.core.splitinstall.model.SplitInstallErrorCode
 import com.google.android.play.core.splitinstall.model.SplitInstallSessionStatus
 import io.reactivex.Completable
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import me.khol.base.base.BaseViewModel
 import me.khol.navigation.*
 import me.khol.network.ApiInteractor
+import java.util.concurrent.TimeUnit
 
 /**
  *
@@ -39,6 +42,7 @@ class LoginViewModel(
     init {
         disposables += manager.observeSessionStates()
             .subscribeOn(Schedulers.io())
+            .delay(100, TimeUnit.MILLISECONDS)  // TODO: Ermm, this feels hacky...
             .subscribe { state ->
                 currentSessionModule?.let { (session, module) ->
                     if (state.sessionId() == session) {
@@ -67,25 +71,27 @@ class LoginViewModel(
     }
 
     private fun loadModule(module: Module) {
+        // TODO: We can skip downloading of module like this if it already exists
+        // but we explicitly want to test downloading so keep it commented out
 //        if (manager.hasModule(module.name)) {
 //            progressSubject.onNext(Result.Success.Installed(module, "Installed"))
-//
-//        } else {
-            val cancel = currentSessionModule?.let {
-                manager.cancelDownload(it.session)
-                    .doOnError { progressSubject.onNext(resolveSessionError(module, it)) }
-                    .onErrorComplete()
-            } ?: Completable.complete()
-
-            val download = manager.downloadModule(module.name)
-
-            disposables += cancel.andThen(download)
-                .subscribe({ sessionId ->
-                    currentSessionModule = SessionModule(sessionId, module)
-                }, { throwable ->
-                    progressSubject.onNext(resolveSessionError(module, throwable))
-                })
+//            return
 //        }
+
+        val cancel = /*currentSessionModule?.let {
+            manager.cancelDownload(it.session)
+                .doOnError { progressSubject.onNext(resolveSessionError(module, it)) }
+                .onErrorComplete()
+        } ?: */Completable.complete()
+
+        val download = manager.downloadModule(module.name)
+
+        disposables += cancel.andThen(download)
+            .subscribe({ sessionId ->
+                currentSessionModule = SessionModule(sessionId, module)
+            }, { throwable ->
+                progressSubject.onNext(resolveSessionError(module, throwable))
+            })
     }
 
     private fun resolveSessionState(module: Module, state: SplitInstallSessionState): Result.Success {

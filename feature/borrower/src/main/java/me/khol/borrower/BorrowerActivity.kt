@@ -1,9 +1,9 @@
 package me.khol.borrower
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import me.khol.base.base.BaseActivity
 
-class BorrowerActivity : AppCompatActivity() {
+class BorrowerActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

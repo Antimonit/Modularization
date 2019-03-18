@@ -1,9 +1,9 @@
 package me.khol.investor
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import me.khol.base.base.BaseActivity
 
-class InvestorActivity : AppCompatActivity() {
+class InvestorActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
