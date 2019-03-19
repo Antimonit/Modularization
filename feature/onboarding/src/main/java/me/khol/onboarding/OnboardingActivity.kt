@@ -1,5 +1,12 @@
 package me.khol.onboarding
 
-import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import me.khol.base.base.BaseActivity
 
-class OnboardingActivity : AppCompatActivity()
+class OnboardingActivity : BaseActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_onboarding)
+    }
+}

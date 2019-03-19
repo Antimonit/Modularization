@@ -2,6 +2,8 @@ package me.khol.network
 
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
+import me.khol.network.model.LoginRequest
+import me.khol.network.model.User
 
 interface ApiInteractor {
 

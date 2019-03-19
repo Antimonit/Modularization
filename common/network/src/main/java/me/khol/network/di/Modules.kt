@@ -1,4 +1,4 @@
-package me.khol.network
+package me.khol.network.di
 
 import org.koin.core.context.loadKoinModules
 import org.koin.core.module.Module

@@ -9,7 +9,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import me.khol.base.base.BaseActivity
 import me.khol.intro.R
-import me.khol.navigation.navigation
+import me.khol.navigation.Navigation
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.viewModel
 
 class LoginActivity : BaseActivity() {
@@ -22,6 +23,7 @@ class LoginActivity : BaseActivity() {
     private val txtState by lazy { findViewById<TextView>(R.id.txt_state) }
 
     private val viewModel: LoginViewModel by viewModel()
+    private val navigation: Navigation by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,7 +42,7 @@ class LoginActivity : BaseActivity() {
                 txtModules.text = "Modules: ${modules.joinToString()}"
             }
 
-        disposables += viewModel.observeProgress()
+        disposables += viewModel.observeResult()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { result ->
                 when (result) {
@@ -54,6 +56,7 @@ class LoginActivity : BaseActivity() {
                                 }?.let { startActivity(it) }
                             }
                             is Result.Success.RequiresUserConfirmation -> {
+                                // TODO: Request code not handled.
                                 result.manager.startConfirmationDialogForResult(result.state, this, 1337)
                             }
                         }

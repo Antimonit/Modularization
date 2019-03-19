@@ -35,7 +35,7 @@ class LoginViewModel(
 
     fun observeLoading(): Observable<Boolean> = loadingSubject
     fun observeModules(): Observable<List<String>> = modulesSubject
-    fun observeProgress(): Observable<Result> = progressSubject
+    fun observeResult(): Observable<Result> = progressSubject
 
     private var currentSessionModule: SessionModule? = null
 
@@ -71,22 +71,12 @@ class LoginViewModel(
     }
 
     private fun loadModule(module: Module) {
-        // TODO: We can skip downloading of module like this if it already exists
-        // but we explicitly want to test downloading so keep it commented out
-//        if (manager.hasModule(module.name)) {
-//            progressSubject.onNext(Result.Success.Installed(module, "Installed"))
-//            return
-//        }
+        if (manager.hasModule(module.name)) {
+            progressSubject.onNext(Result.Success.Installed(module, "Installed"))
+            return
+        }
 
-        val cancel = /*currentSessionModule?.let {
-            manager.cancelDownload(it.session)
-                .doOnError { progressSubject.onNext(resolveSessionError(module, it)) }
-                .onErrorComplete()
-        } ?: */Completable.complete()
-
-        val download = manager.downloadModule(module.name)
-
-        disposables += cancel.andThen(download)
+        disposables += manager.downloadModule(module.name)
             .subscribe({ sessionId ->
                 currentSessionModule = SessionModule(sessionId, module)
             }, { throwable ->

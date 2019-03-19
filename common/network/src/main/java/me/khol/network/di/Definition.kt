@@ -1,6 +1,9 @@
-package me.khol.network
+package me.khol.network.di
 
 import com.squareup.moshi.Moshi
+import me.khol.network.ApiDescription
+import me.khol.network.ApiInteractor
+import me.khol.network.ApiInteractorImpl
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -32,5 +35,10 @@ internal fun apiInteractor(apiDescription: ApiDescription): ApiInteractor {
 }
 
 internal fun createApiInteractor(baseUrl: String): ApiInteractor {
-    return apiInteractor(apiDescription(baseUrl, okHttpClient()))
+    return apiInteractor(
+        apiDescription(
+            baseUrl,
+            okHttpClient()
+        )
+    )
 }

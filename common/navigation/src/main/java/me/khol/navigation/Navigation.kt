@@ -3,13 +3,6 @@ package me.khol.navigation
 import android.content.Intent
 
 /**
- * Static navigation.
- *
- * TODO: Provide this via DI.
- */
-lateinit var navigation: Navigation
-
-/**
  * Provides navigation intents to various modules of the application.
  */
 interface Navigation {

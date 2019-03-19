@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Resources in the main [app] module have priority over these values -->
+    <color name="colorPrimary">#FFC107</color>
+    <color name="colorPrimaryDark">#FF8F00</color>
+    <color name="colorAccent">#00BCD4</color>
+</resources>
