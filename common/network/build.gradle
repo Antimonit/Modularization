@@ -1,4 +1,4 @@
-apply from: "$rootDir/common-kotlin-library.gradle"
+apply from: "$rootDir/gradle/kotlin-library.gradle"
 
 dependencies {
     implementation Libraries.rxjava
