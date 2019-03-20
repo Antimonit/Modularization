@@ -3,7 +3,7 @@ package me.khol.modularization.di
 import android.content.Context
 import android.content.Intent
 import me.khol.navigation.Navigation
-import me.khol.onboarding.OnboardingActivity
+import me.khol.onboarding.screen.OnboardingActivity
 import org.koin.core.context.loadKoinModules
 import org.koin.core.module.Module
 import org.koin.dsl.module

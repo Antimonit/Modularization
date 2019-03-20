@@ -4,14 +4,21 @@ apply plugin: 'kotlin-kapt'
 dependencies {
     implementation project(Modules.base)
 
-    implementation Libraries.lifecycleRuntime
-    implementation Libraries.lifecycleExtensions
-    kapt Libraries.lifecycleCompiler
-
     implementation SupportLibraries.design
     implementation SupportLibraries.cardview
     implementation SupportLibraries.appcompat
     implementation SupportLibraries.recyclerview
+
+    implementation Libraries.lifecycleRuntime
+    implementation Libraries.lifecycleExtensions
+    kapt Libraries.lifecycleCompiler
+
+    implementation Libraries.roomRuntime
+    implementation Libraries.roomRxJava
+    kapt Libraries.roomCompiler
+
+    implementation Libraries.koinAndroid
+    implementation Libraries.koinViewModel
 
     testImplementation TestLibraries.junit
     testImplementation TestLibraries.assertjCore

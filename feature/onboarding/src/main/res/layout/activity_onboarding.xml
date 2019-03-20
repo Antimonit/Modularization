@@ -8,7 +8,7 @@
     android:padding="32dp"
     android:background="@color/colorPrimary"
     android:orientation="vertical"
-    tools:context=".OnboardingActivity">
+    tools:context=".screen.OnboardingActivity">
 
     <TextView
         android:text="Onboarding"

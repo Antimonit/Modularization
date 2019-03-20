@@ -38,7 +38,11 @@ object Libraries {
     const val lifecycleRuntime = "androidx.lifecycle:lifecycle-runtime:2.1.0-alpha02"
     const val lifecycleExtensions = "androidx.lifecycle:lifecycle-extensions:2.1.0-alpha02"
     const val lifecycleCompiler = "androidx.lifecycle:lifecycle-compiler:2.1.0-alpha02"
-    
+
+    const val roomRuntime = "android.arch.persistence.room:runtime:1.1.1"
+    const val roomRxJava = "android.arch.persistence.room:rxjava2:1.1.1"
+    const val roomCompiler = "android.arch.persistence.room:compiler:1.1.1"
+
     const val koinAndroid = "org.koin:koin-android:2.0.0-beta-1"
     const val koinViewModel = "org.koin:koin-androidx-viewmodel:2.0.0-beta-1"
 }

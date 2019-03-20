@@ -1,7 +1,8 @@
-package me.khol.onboarding
+package me.khol.onboarding.screen
 
 import android.os.Bundle
 import me.khol.base.base.BaseActivity
+import me.khol.onboarding.R
 
 class OnboardingActivity : BaseActivity() {
 

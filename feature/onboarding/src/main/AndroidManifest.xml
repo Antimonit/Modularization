@@ -2,7 +2,7 @@
           package="me.khol.onboarding">
 
     <application>
-        <activity android:name=".OnboardingActivity"/>
+        <activity android:name=".screen.OnboardingActivity"/>
     </application>
 
 </manifest>
